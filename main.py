@@ -1,42 +1,40 @@
+import sys
+
+from stats import count_words, count_chars, sort_chars
+
+#test: python3 main.py books/frankenstein.txt
+#test: python3 main.py books/mobydick.txt
+#test: python3 main.py books/prideandprejudice.txt
 def main():
-    book_path = "books/frankenstein.txt"
-    with open(book_path) as f:
-        file_contents = f.read()
+    if len(sys.argv) != 2:
+        print("Usage: python3 main.y <path_to_book>")
+        sys.exit(1)
     
+    book_path = sys.argv[1]
+    file_contents = get_book_text(book_path)
+
     word_count = count_words(file_contents)
-    char_counts = count_chars(file_contents)
-    char_counts_dict_list = []
-    for k in char_counts:
-        char_counts_dict_list.append({"char": k, "num": char_counts[k]})
-    
-    print(char_counts_dict_list)
+    char_counts = sort_chars(count_chars(file_contents))
 
-    char_counts_dict_list.sort(reverse=True, key=sort_on)
-    
-    print(f"--- Begin report of {book_path} ---")
-    print(f"{word_count} words found in the document")
-    print()
-    for char_count in char_counts_dict_list:
-        print(f"The '{char_count["char"]}' character was found {char_count["num"]} times")
-    print("--- End report ---")
-    
+    print("============ BOOKBOT ============")
+    print(f"Analyzing book found at {book_path}...")
+    print("----------- Word Count ----------")
+    print(f"Found {word_count} total words")
+    print("--------- Character Count -------")
+    #print(char_counts)
+    for char_count in char_counts:
+        print(f"{char_count["char"]}: {char_count["num"]}")
+    print("============= END ===============")
 
-def count_words(file_contents):
-    return len(file_contents.split())
+    #for char_count in char_counts_dict_list:
+        #print(f"The '{char_count["char"]}' character was found {char_count["num"]} times")
+    #print("--- End report ---")
 
-def count_chars(file_contents):
-    characters = {}
-    for char in file_contents.lower():
-        if char.isalpha() == False:
-            continue
-        
-        if char in characters:
-            characters[char] += 1
-        else:
-            characters[char] = 1
-    return characters
+def get_book_text(file_path):
+    with open(file_path) as f:
+        file_contents = f.read()
+    return file_contents
 
-def sort_on(dict):
-    return dict["num"]
+
 
 main()
